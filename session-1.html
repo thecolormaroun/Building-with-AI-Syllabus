@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 1: Setup + Build + Iterate — AI Native</title>
+<meta name="description" content="Install Claude Code, create your first website, and learn 3 ways to iterate. Self-guided walkthrough from AI Jam Session 1.">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3340;
+    --text: #e4e6eb;
+    --text-muted: #8b8fa3;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --orange: #fdcb6e;
+    --pink: #fd79a8;
+    --blue: #74b9ff;
+    --teal: #81ecec;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Sticky Nav ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .sticky-nav.visible { display: flex; }
+  .sticky-nav a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .sticky-nav a:hover { color: var(--text); }
+  .sticky-nav .nav-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 72px 0 56px;
+    background: linear-gradient(135deg, rgba(108,92,231,0.15) 0%, rgba(162,155,254,0.05) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 28px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 1; }
+  .hero-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.15);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    max-width: 600px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .hero-meta .sep { opacity: 0.3; }
+
+  /* ── Sections ── */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+  section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Skills Learned ── */
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .skill-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.2s;
+  }
+  .skill-item:hover { border-color: rgba(108,92,231,0.3); }
+  .skill-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,184,148,0.15);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .skill-item span {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .skill-item strong { color: var(--accent2); }
+
+  .tldr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .tldr-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .tldr-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .tldr-box h4 a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .tldr-box h4 a:hover { color: var(--accent2); }
+  .tldr-box p, .tldr-box li {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .tldr-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tldr-box li { display: flex; flex-direction: row; gap: 8px; align-items: baseline; }
+  .tldr-box li::before { content: none; }
+  .tldr-box .link-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .tldr-box a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .tldr-box a:hover { opacity: 0.75; }
+  .tldr-box .install-cmd {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .tldr-box .install-cmd .link-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .tldr-box .install-cmd code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--green);
+    word-break: break-all;
+    display: block;
+  }
+
+  /* ── Video collapsible ── */
+  .video-details {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .video-details summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .video-details summary:hover { background: var(--surface2); }
+  .video-details summary::-webkit-details-marker { display: none; }
+  .video-details summary::before {
+    content: '▶';
+    font-size: 9px;
+    color: var(--accent2);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  .video-details[open] summary::before { transform: rotate(90deg); }
+  .video-details-inner {
+    border-top: 1px solid var(--border);
+    padding: 20px;
+  }
+  .video-embed-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+  }
+  .video-embed-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+    border-radius: 10px;
+  }
+
+  /* ── Video ── */
+  .video-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+  .video-wrap video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    max-height: 520px;
+  }
+  .video-fallback {
+    display: none;
+    padding: 48px 32px;
+    text-align: center;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .video-fallback .fallback-icon { font-size: 36px; margin-bottom: 12px; }
+  .video-fallback p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+  .video-fallback a { color: var(--accent2); text-decoration: none; }
+  .video-caption {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ── Walkthrough ── */
+  .walkthrough-intro {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+  .walkthrough-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .walkthrough-controls button {
+    font-size: 13px;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.1);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  .walkthrough-controls button:hover { background: rgba(108,92,231,0.2); }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  details[open] { border-color: rgba(108,92,231,0.3); }
+  details summary {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    min-height: 56px;
+    user-select: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before {
+    content: '▶';
+    font-size: 9px;
+    color: var(--accent2);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary .step-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.12);
+    padding: 3px 9px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .details-inner {
+    overflow: hidden;
+    padding: 20px 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  /* Hide the grid hack initially until details opens */
+  details:not([open]) .details-inner { display: none; }
+  details[open] .details-inner { display: block; }
+
+  .details-inner p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .details-inner p:last-child { margin-bottom: 0; }
+  .details-inner strong { color: var(--text); }
+  .details-inner code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+  .details-inner em { color: var(--text); font-style: italic; }
+
+  .watchout {
+    background: rgba(253,203,110,0.06);
+    border: 1px solid rgba(253,203,110,0.2);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .watchout strong { color: var(--orange); }
+
+  .method-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .method-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .method-item .method-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .method-item p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0 !important;
+  }
+
+  .quote-block {
+    background: rgba(108,92,231,0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--accent2);
+    line-height: 1.7;
+  }
+
+  /* ── Homework ── */
+  .homework-card {
+    background: linear-gradient(135deg, rgba(0,184,148,0.08) 0%, rgba(0,184,148,0.03) 100%);
+    border: 1px solid rgba(0,184,148,0.25);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .homework-card .hw-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .homework-card .hw-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(0,184,148,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .homework-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .homework-card .hw-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .hw-section { margin-bottom: 24px; }
+  .hw-section:last-child { margin-bottom: 0; }
+  .hw-section h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+  .hw-section p, .hw-section li {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .hw-section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hw-section li::before {
+    content: '→ ';
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .hw-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .hw-method {
+    background: rgba(0,184,148,0.06);
+    border: 1px solid rgba(0,184,148,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .hw-method .hw-method-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .hw-method p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 !important;
+  }
+  .hw-method strong { color: var(--text); }
+  .hw-method code {
+    background: rgba(0,184,148,0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--green);
+    font-family: 'SF Mono', monospace;
+  }
+
+  .pro-tip {
+    background: rgba(108,92,231,0.08);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pro-tip strong { color: var(--accent2); }
+
+  /* ── Scroll animations ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+  .hero-content { animation: fadeUp 0.6s ease forwards; }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.5px; }
+    .tldr-grid { grid-template-columns: 1fr; }
+    details summary { min-height: 52px; padding: 14px 18px; }
+    .homework-card { padding: 22px; }
+    section { padding: 44px 0; }
+    .container { padding: 0 16px; }
+  }
+  @media (max-width: 960px) {
+    .container { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sticky Nav (shown after hero scrolls away) -->
+<nav class="sticky-nav" id="sticky-nav" role="navigation" aria-label="Session navigation">
+  <a href="index.html">← AI Native</a>
+  <span class="nav-title">Session 1 — Setup + Build + Iterate</span>
+</nav>
+
+<!-- Hero -->
+<header class="hero" id="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <a href="index.html" class="back-link">← AI Native</a>
+      <div class="hero-label">Session 1</div>
+      <h1>Setup + Build + Iterate</h1>
+      <div class="hero-meta">
+        <span>March 16, 2026</span>
+        <span class="sep">·</span>
+        <span>~60 min</span>
+        <span class="sep">·</span>
+        <span>11 participants</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Skills Learned -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Skills Learned</div>
+    <h2 class="fade-in">What we covered.</h2>
+
+    <div class="skills-list fade-in">
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Set up Claude Code in the terminal and created a home base folder</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Installed <strong>Visual Explainer</strong> — turns any doc into an interactive, visual website</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Installed <strong>Compound Engineering</strong> — full multi-agent dev workflow that plans, builds, and reviews</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Fed a document into Claude and generated a first version of a website</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Learned 3 ways to iterate: voice dump → <code style="font-family:monospace;font-size:13px;color:var(--accent2);background:rgba(108,92,231,0.1);padding:1px 6px;border-radius:4px;">/lfg</code>, voice dump → vanilla Claude, and Agentation → targeted feedback</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Installed <strong>Agentation</strong> — leave Figma-style comments directly on your live site and pipe feedback straight to Claude Code</span>
+      </div>
+    </div>
+
+    <div class="tldr-grid fade-in">
+      <div class="tldr-box">
+        <h4><a href="#homework-section">Homework ↓</a></h4>
+        <ul>
+          <li><span class="link-label">→ Keep iterating on what you made</span></li>
+          <li><span class="link-label">→ Add functionality to your product</span></li>
+          <li><span class="link-label">→ Come to class 2 ready to demo</span></li>
+          <li><span class="link-label">→ Share in <strong>#pd-design-ai-tips</strong></span></li>
+        </ul>
+      </div>
+      <div class="tldr-box">
+        <h4>Key Links</h4>
+        <div class="install-cmd">
+          <div class="link-label">Type this in terminal to install Claude Code</div>
+          <code>curl -fsSL https://claude.ai/install.sh | bash</code>
+        </div>
+        <ul>
+          <li><a href="https://github.com/nicobailon/visual-explainer" target="_blank" rel="noopener noreferrer">Visual Explainer</a></li>
+          <li><a href="https://github.com/EveryInc/compound-engineering-plugin" target="_blank" rel="noopener noreferrer">Compound Engineering</a></li>
+          <li><a href="https://handy.computer/" target="_blank" rel="noopener noreferrer">Handy Computer</a></li>
+          <li><a href="https://github.com/vercel-labs/agent-browser" target="_blank" rel="noopener noreferrer">Agent Browser</a></li>
+          <li><a href="https://www.agentation.com/" target="_blank" rel="noopener noreferrer">Agentation</a></li>
+          <li><a href="https://motion.dev/" target="_blank" rel="noopener noreferrer">Framer Motion</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Full Video -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Full Session Recording</div>
+
+    <div class="fade-in">
+      <details class="video-details">
+        <summary>Watch the full session</summary>
+        <div class="video-details-inner">
+          <div class="video-embed-wrap">
+            <iframe
+              src="https://fathom.video/embed/xbTZjow6zVh3hVMPzhKx66hKjZSnik5R"
+              allow="autoplay; fullscreen"
+              allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Written Walkthrough -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Self-Guided Walkthrough</div>
+    <h2 class="fade-in">Do it yourself, step by step.</h2>
+
+    <p class="walkthrough-intro fade-in">
+      Everything we covered in session 1, written out step by step. For anyone who missed it — or wants to run through it again at their own pace.
+    </p>
+
+    <div class="walkthrough-controls fade-in">
+      <button onclick="expandAll()">Expand all</button>
+      <button onclick="collapseAll()">Collapse all</button>
+    </div>
+
+    <div class="steps-list fade-in">
+
+      <!-- Step 1 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 1</span>
+          Create your home base folder
+        </summary>
+        <div class="details-inner">
+          <p>Open <strong>Finder</strong>. Navigate to your user folder — this is the folder named after your Mac username (the one that contains Applications, Desktop, Documents, etc.). You can get there by right-clicking the folder name at the top of any Finder window and selecting your username from the dropdown.</p>
+          <p>Inside that folder, create a new folder. Name it <strong>Claude</strong> (or Mission Control, or Brain — whatever works for you). <strong>One word only</strong>, no spaces — it'll be easier to reference later.</p>
+          <p>This folder is where everything lives. All your Claude projects, all your memory, everything you build.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> Don't put this folder inside Documents or Desktop. Apple has weird permissions on those folders that can cause issues. Put it directly inside your user folder.</div>
+        </div>
+      </details>
+
+      <!-- Step 2 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 2</span>
+          Open Terminal and navigate to your folder
+        </summary>
+        <div class="details-inner">
+          <p>Search for <strong>Terminal</strong> in Spotlight (Cmd+Space) and open it.</p>
+          <p>The terminal is always "located" somewhere in your file system. You need to move it into your new Claude folder. There are only <strong>three commands</strong> you need to know:</p>
+          <ul style="list-style:none; padding:0; margin:12px 0; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:14px; color:var(--text-muted);"><code>ls</code> — lists what's in your current location. Use this any time you're not sure where you are.</li>
+            <li style="font-size:14px; color:var(--text-muted);"><code>cd [foldername]</code> — moves you into a folder. Example: <code>cd Claude</code></li>
+            <li style="font-size:14px; color:var(--text-muted);"><code>cd ..</code> — moves you back up one level</li>
+          </ul>
+          <p>Type <code>ls</code> and press Enter. You should see your user folders listed. If you see Claude in the list, type <code>cd Claude</code> and press Enter.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> Everything in terminal is case-sensitive. <code>cd claude</code> and <code>cd Claude</code> are different things. If it says "no such file or directory," check your capitalization.</div>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> Terminal gives almost no confirmation when things work. Silence = success. You'll only see output when something goes wrong.</div>
+        </div>
+      </details>
+
+      <!-- Step 3 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 3</span>
+          Install Claude Code
+        </summary>
+        <div class="details-inner">
+          <p>Go to the <strong>#pd-ai</strong> Slack channel and find the pinned setup message. Copy the first install command (it starts with <code>curl</code>).</p>
+          <p>Paste it into your terminal with <strong>Cmd+V</strong> and press Enter. This will download and install Claude Code. You'll see a bunch of text scroll by — that's normal. Wait for it to finish.</p>
+          <p>When it's done, you'll see a line that says something like <code>echo export PATH=...</code>. <strong>Copy that entire line</strong> and paste it back into the terminal, then press Enter.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> That <code>echo</code> line must be on a single line. If your terminal window is narrow, it might appear to wrap — make the window wider and try again if you get an error.</div>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> If it asks you to install <strong>Homebrew</strong> as part of this process, say yes and let it run. Homebrew is like an app store for development tools. Claude Code will need it.</div>
+        </div>
+      </details>
+
+      <!-- Step 4 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 4</span>
+          Summon Claude Code
+        </summary>
+        <div class="details-inner">
+          <p>Type <code>claude</code> (all lowercase) and press Enter.</p>
+          <p>A setup wizard will appear. Use your <strong>arrow keys</strong> to navigate and <strong>Enter</strong> to select. First choice: light or dark mode. Second: it will ask you to log in. Select the option to log in via browser, click Authorize, and come back to the terminal.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> Make sure you log in with your <strong>Change.org Google account</strong>, not a personal account. If you accidentally log in with a personal account, you'll be on the free plan and some features won't work. Exit out (<code>Ctrl+C</code>), reopen terminal, <code>cd Claude</code>, type <code>claude</code> again.</div>
+          <p>When you're in, it will ask about your workspace. Select <strong>"Trust this folder"</strong> — this tells Claude Code it's allowed to read and write files within your Claude folder.</p>
+          <p>You're in. Claude Code is now running like a chatbot in your terminal.</p>
+        </div>
+      </details>
+
+      <!-- Step 5 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 5</span>
+          Install your skills
+        </summary>
+        <div class="details-inner">
+          <p>Skills are like plugins that give Claude Code superpowers. Today we install two.</p>
+          <p><strong>For each skill:</strong> Go to the Slack channel and find the GitHub link for the skill. In Claude Code, type something like <em>"I want you to install this skill so we can use it going forward"</em> and paste the GitHub URL. Claude will read the code, confirm it's safe, and install it.</p>
+          <p><strong>Skill 1: Visual Explainer</strong> — Turns any document into an interactive, visual website. It has modes for slides, diagrams, and full-page layouts.</p>
+          <p><strong>Skill 2: Compound Engineering</strong> — Your workhorse. Installs a full multi-agent development workflow. The key command is <code>lfg</code> — when you put that at the start of a prompt, it runs through a full plan → build → review loop without stopping to ask questions. It takes ~20 minutes but produces thorough, well-structured results.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> These skills are large and take a few minutes to install (Compound Engineering especially — up to 4-5 minutes). Let them run. Don't interrupt.</div>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> After installing <em>each</em> skill, you need to restart Claude Code. Close the terminal window, reopen it, <code>cd Claude</code>, type <code>claude</code>.</div>
+        </div>
+      </details>
+
+      <!-- Step 6 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 6</span>
+          Install Agentation (feedback tool)
+        </summary>
+        <div class="details-inner">
+          <p>Agentation is a third skill that lets you leave Figma-style comments directly on your live website in the browser and pipe that feedback back to Claude Code. Install it the same way as above using the link in the Slack channel.</p>
+          <p>To activate it, type <code>/agentation</code> in Claude Code. It will open a special browser window with your site loaded. A small toolbar will appear — click on any element to leave a comment. When you're done commenting, hit <strong>"Copy Feedback"</strong> in the toolbar, paste it into Claude Code, and it'll address all of your notes at once.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> If the site loads but all the elements appear bunched in the bottom-left corner, screenshot the whole page, paste it into Claude Code (<code>Ctrl+V</code> for images), and say "for some reason all the elements are rendering in the bottom left corner, can you fix this?"</div>
+        </div>
+      </details>
+
+      <!-- Step 7 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 7</span>
+          Find your content and build your first site
+        </summary>
+        <div class="details-inner">
+          <p>Find something to turn into a website. Good options:</p>
+          <ul style="list-style:none; padding:0; margin:10px 0 16px; display:flex; flex-direction:column; gap:6px;">
+            <li style="font-size:14px; color:var(--text-muted);">→ A strategy doc (download as <strong>Markdown</strong> from Google Docs — File → Download → Markdown)</li>
+            <li style="font-size:14px; color:var(--text-muted);">→ A research brief or research findings doc</li>
+            <li style="font-size:14px; color:var(--text-muted);">→ A prioritization spreadsheet (download as <strong>CSV</strong>)</li>
+          </ul>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> If you try to download a Google Doc as Markdown and it comes out as a 0-byte empty file, use PDF instead — it works too.</div>
+          <p><strong>Point Claude to your file:</strong> In Finder, click on your file to highlight it. Press <strong>Cmd+Option+C</strong>. This copies the file's location (its path) as text. Now paste it (<code>Cmd+V</code>) into your Claude Code prompt.</p>
+          <p><strong>Your first prompt:</strong> Hold the <strong>spacebar</strong> to activate voice input. Say something like:</p>
+          <div class="quote-block">"I want you to build a website from this document. Make it interactive and use the Visual Explainer skill. Use as much layout as possible — don't just give me a wall of text. If you see an opportunity to build a diagram or make something interactive, take it. Use the words from the document verbatim. Here's the file:" → then paste the path.</div>
+          <p>Press Enter and let it cook. It'll take a few minutes.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> When prompts come up asking for permissions (like "can I read this file?"), always choose <strong>option 2: Yes, and don't ask again for this session</strong>. This keeps the workflow moving.</div>
+        </div>
+      </details>
+
+      <!-- Step 8 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 8</span>
+          Preview your site
+        </summary>
+        <div class="details-inner">
+          <p>When Claude is done, it will have created an HTML file inside your Claude folder. Find it in Finder and double-click it — it will open in your browser.</p>
+          <p>Alternatively, Claude Code may tell you it's running at <code>http://localhost:3000</code> or similar. Copy that URL and paste it into your browser.</p>
+          <p>You now have a live website running locally on your machine. Nobody else can see it yet — that's fine for now.</p>
+        </div>
+      </details>
+
+      <!-- Step 9 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 9</span>
+          Iterate on it — 3 methods
+        </summary>
+        <div class="details-inner">
+          <p>Now the real work begins. Here are the <strong>three ways to give feedback</strong>, and when to use each:</p>
+          <div class="method-list">
+            <div class="method-item">
+              <div class="method-label">Option 1 — Voice dump → Compound Engineering (<code>/lfg</code>)</div>
+              <p><strong>Use when:</strong> the output feels very off and you want a full redo. Takes ~20 min but is thorough. Say: <em>"This isn't working for me. I want you to redo this using the LFG command from Compound Engineering."</em></p>
+            </div>
+            <div class="method-item">
+              <div class="method-label">Option 2 — Voice dump → vanilla Claude Code</div>
+              <p><strong>Use when:</strong> the output is roughly right but needs improvement and you don't want to wait 20 minutes. Just hold spacebar, describe what you want changed, and let it take a pass.</p>
+            </div>
+            <div class="method-item">
+              <div class="method-label">Option 3 — Agentation → targeted feedback</div>
+              <p><strong>Use when:</strong> you have specific feedback on specific elements. Type <code>/agentation</code>, leave comments in the browser toolbar, hit Copy Feedback, paste into Claude Code.</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Step 10 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 10</span>
+          Add motion
+        </summary>
+        <div class="details-inner">
+          <p>Once your site looks good, ask Claude Code to add motion:</p>
+          <div class="quote-block">"I want you to install Framer Motion and add tasteful hover effects, scroll animations, and transitions to this site."</div>
+          <p>It will install Framer Motion (via <strong>npm</strong> — like Homebrew but for JavaScript packages) and wire it into your site.</p>
+          <p>Then <strong>creative edit</strong> the motion. Tell it to make things faster, slower, more subtle, or remove effects that feel cheap. This is where your designer taste really matters — Claude will do whatever you ask here.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> The first time Claude needs Homebrew or npm, it'll ask you to install them. Just say yes and let it handle it. Once they're installed, you'll never need to think about them again.</div>
+        </div>
+      </details>
+
+      <!-- Golden Rule -->
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(253,203,110,0.12); color:var(--orange);">Golden Rule</span>
+          How to troubleshoot when things go wrong
+        </summary>
+        <div class="details-inner">
+          <p>Any time something looks broken, weird, or you're stuck — <strong>take a screenshot</strong> (<code>Cmd+Ctrl+Shift+4</code> to copy to clipboard) and paste it into Claude Code with <strong>Ctrl+V</strong> (not Cmd+V — Ctrl+V is for images). Say: <em>"This is what I'm seeing — can you tell me what's going on and fix it?"</em></p>
+          <p>Claude can see the screenshot and usually diagnoses the problem immediately. This is almost always faster than trying to describe it in words.</p>
+          <p>You can also type <code>btw</code> in Claude Code while it's working on something to have a side conversation without interrupting the main task.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- Homework -->
+<section id="homework-section">
+  <div class="container">
+    <div class="section-label fade-in">Homework</div>
+    <h2 class="fade-in">Your assignment before Session 2.</h2>
+
+    <div class="homework-card fade-in">
+      <div class="hw-header">
+        <div class="hw-icon">📬</div>
+        <div>
+          <h3>Get reps in</h3>
+          <div class="hw-sub">Session 2 starts with demos — come ready to show something</div>
+        </div>
+      </div>
+
+      <div class="hw-section">
+        <h4>What to do</h4>
+        <ul>
+          <li>Keep iterating on what you made today — or start something new if a different project feels more relevant</li>
+          <li>Add functionality to your product. Don't just make it look good — make it <em>do</em> something</li>
+          <li>We'll start Session 2 with demos. Show off something you polished through multiple rounds of iteration</li>
+        </ul>
+      </div>
+
+      <div class="hw-section">
+        <h4>3 ways to iterate</h4>
+        <div class="hw-methods">
+          <div class="hw-method">
+            <div class="hw-method-num">01 — Voice dump → Compound Engineering (<code>/lfg</code>)</div>
+            <p>Use this when your output feels <em>very</em> off or you want a complete redo. It's thorough but takes ~20 minutes. Say: <strong>"I don't like this. I want you to redo it using the /LFG command from Compound Engineering."</strong></p>
+          </div>
+          <div class="hw-method">
+            <div class="hw-method-num">02 — Voice dump → vanilla Claude Code</div>
+            <p>Use for general feedback where you don't need the full pipeline. Just hold spacebar, describe what's not working, and let it take a pass.</p>
+          </div>
+          <div class="hw-method">
+            <div class="hw-method-num">03 — Agentation → targeted feedback</div>
+            <p>Use when you have <em>specific</em> feedback on specific elements. Leaves Figma-style comments on your live site — tells Claude exactly <em>where</em> to make changes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hw-section">
+        <h4>Pro tip</h4>
+        <div class="pro-tip">
+          <strong>Screenshot everything.</strong> Whenever something looks broken, weird, or you're not sure what Claude or the terminal is doing — screenshot it and paste it straight into Claude Code (<code>Control+V</code> for images). Ask it what's going on or tell it to fix it. This is almost always faster than trying to describe the problem in words.
+        </div>
+      </div>
+
+      <div class="hw-section">
+        <h4>A note on tooling</h4>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.7;">As you keep building, Claude Code will likely need to install <strong>Homebrew</strong> and <strong>npm</strong> — think of these as app stores for development tools. Don't stress when they come up. Just ask Claude Code to walk you through it.</p>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.7; margin-top:10px;">It can also help to tell Claude: <em>"I am a designer, I'm unfamiliar with this stuff — explain things clearly, try to fix things yourself, and give me terminal commands one at a time. Add this to your Claude.md so you remember."</em></p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>AI Native · Change.org Design &amp; Product · 2026 · Share in <strong>#pd-ai</strong></p>
+  </div>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Sticky nav — show when hero scrolls out
+  const heroSection = document.getElementById('hero-section');
+  const stickyNav = document.getElementById('sticky-nav');
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      stickyNav.classList.toggle('visible', !entry.isIntersecting);
+    });
+  }, { threshold: 0 });
+  navObserver.observe(heroSection);
+
+  // Expand / Collapse all
+  function expandAll() {
+    document.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+  }
+  function collapseAll() {
+    document.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+  }
+
+</script>
+
+</body>
+</html>
