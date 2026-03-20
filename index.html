@@ -212,6 +212,23 @@
   .badge-upnext    { background: rgba(108,92,231,0.15); color: var(--accent2); }
   .badge-soon      { background: var(--surface2); color: var(--text-muted); }
 
+  .badge-sidequest {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(253,203,110,0.15);
+    color: var(--orange);
+    position: absolute;
+    top: 12px;
+    right: 16px;
+  }
+
   .session-card.clickable:hover .session-badge {
     opacity: 0;
     transform: translateX(10px);
@@ -380,7 +397,7 @@
 <section>
   <div class="container">
     <div class="section-label fade-in">The Curriculum</div>
-    <h2 class="fade-in">Five sessions that build on each other.</h2>
+    <h2 class="fade-in">Four sessions + a sidequest.</h2>
 
     <div class="sessions">
 
@@ -405,9 +422,11 @@
       <div class="session-card status-upnext fade-in">
         <div class="session-num">2</div>
         <div class="session-info">
-          <div class="session-title">Ship It: GitHub + Deploy</div>
-          <div class="session-desc">Version control, deploy to a live URL, share your work internally</div>
-          <div class="session-deliverable"><strong>Deliverable:</strong> GitHub access + ability to deploy prototypes to shareable links</div>
+          <div class="session-title">Git 101 + Deploy</div>
+          <div class="session-desc">Learn what Git is, push your project to GitHub, deploy to Vercel with a shareable link. Starts with homework demos from Class 1.</div>
+          <div class="session-deliverable"><strong>Deliverable:</strong> Your project live on Vercel with a shareable URL</div>
+          <div class="session-deliverable" style="margin-top: 4px;"><strong>Guest:</strong> Ryan Herubin (Engineering)</div>
+          <div class="session-deliverable" style="margin-top: 4px; color: var(--orange);"><strong>Pre-work:</strong> GitHub org access + Vercel membership must be set up before class</div>
         </div>
         <div class="session-right">
           <div class="session-badge badge-upnext">
@@ -421,9 +440,9 @@
       <div class="session-card status-soon fade-in">
         <div class="session-num">3</div>
         <div class="session-info">
-          <div class="session-title">Claude Code ↔ Canvas</div>
-          <div class="session-desc">Bridge code and visual canvas, agents spinning up design variations</div>
-          <div class="session-deliverable"><strong>Deliverable:</strong> Export your prototype to Figma and vice versa</div>
+          <div class="session-title">Worktrees + Collaborative Coding</div>
+          <div class="session-desc">Pull down a shared repo, use git worktrees, run multiple agents on the same codebase</div>
+          <div class="session-deliverable"><strong>Deliverable:</strong> Contribute changes to a shared project using worktrees and parallel agents</div>
         </div>
         <div class="session-right">
           <div class="session-badge badge-soon">Coming Soon</div>
@@ -434,22 +453,23 @@
       <div class="session-card status-soon fade-in">
         <div class="session-num">4</div>
         <div class="session-info">
-          <div class="session-title">Mission Control</div>
-          <div class="session-desc">Manage multiple Claude Code instances, parallel builds, organized workflow</div>
-          <div class="session-deliverable"><strong>Deliverable:</strong> Manage multiple agents via worktrees</div>
+          <div class="session-title">Agentic Coding + Skills</div>
+          <div class="session-desc">Master skills, multi-agent workflows, and agentic patterns that scale your output</div>
+          <div class="session-deliverable"><strong>Deliverable:</strong> Build and ship using advanced agent orchestration</div>
         </div>
         <div class="session-right">
           <div class="session-badge badge-soon">Coming Soon</div>
         </div>
       </div>
 
-      <!-- Session 5 — Coming Soon -->
-      <div class="session-card status-soon fade-in">
+      <!-- Session 5 — Sidequest -->
+      <div class="session-card status-soon fade-in" style="position: relative;">
+        <div class="badge-sidequest">Sidequest</div>
         <div class="session-num">5</div>
         <div class="session-info">
-          <div class="session-title">Cowork + Agents</div>
-          <div class="session-desc">Claude as your daily ops assistant, agents on schedules and triggers</div>
-          <div class="session-deliverable"><strong>Deliverable:</strong> Cowork setup and scheduled tasks that automate manual work</div>
+          <div class="session-title">The Playground</div>
+          <div class="session-desc">A shared hub where everyone's prototypes live — deploy, showcase, and browse what the team is building</div>
+          <div class="session-deliverable"><strong>Deliverable:</strong> Your work published to the team's central prototype gallery</div>
         </div>
         <div class="session-right">
           <div class="session-badge badge-soon">Coming Soon</div>
