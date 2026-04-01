@@ -430,26 +430,26 @@
         </div>
       </a>
 
-      <!-- Session 2 — Up Next -->
-      <div class="session-card status-upnext fade-in">
+      <!-- Session 2 — Completed -->
+      <a href="session-2.html" class="session-card status-completed clickable fade-in">
         <div class="session-num">2</div>
         <div class="session-info">
-          <div class="session-title">Git 101 + Deploy</div>
-          <div class="session-desc">Learn what Git is, push your project to GitHub, deploy to Vercel with a shareable link. Starts with homework demos from Class 1.</div>
-          <div class="session-deliverable"><strong>Deliverable:</strong> Your project live on Vercel with a shareable URL</div>
+          <div class="session-title">Git 101 + GitHub</div>
+          <div class="session-desc">Learn what Git is, install Git + GitHub CLI, authenticate, and understand commits, branches, push/pull, and pull requests.</div>
+          <div class="session-deliverable"><strong>Deliverable:</strong> Git and GitHub CLI installed, authenticated, and core concepts understood</div>
           <div class="session-deliverable" style="margin-top:4px"><strong>Guest:</strong> Ryan Herubin (Engineering)</div>
-          <div class="session-deliverable" style="margin-top:4px;color:var(--orange)"><strong>Pre-work:</strong> GitHub org access + Vercel membership must be set up before class</div>
         </div>
         <div class="session-right">
-          <div class="session-badge badge-upnext">
+          <div class="session-badge badge-completed">
             <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
-            Up Next
+            Completed
           </div>
+          <div class="session-arrow">→</div>
         </div>
-      </div>
+      </a>
 
-      <!-- Session 3 — Coming Soon -->
-      <div class="session-card status-soon fade-in">
+      <!-- Session 3 — Up Next -->
+      <div class="session-card status-upnext fade-in">
         <div class="session-num">3</div>
         <div class="session-info">
           <div class="session-title">Worktrees + Collaborative Coding</div>
@@ -457,7 +457,10 @@
           <div class="session-deliverable"><strong>Deliverable:</strong> Contribute changes to a shared project using worktrees and parallel agents</div>
         </div>
         <div class="session-right">
-          <div class="session-badge badge-soon">Coming Soon</div>
+          <div class="session-badge badge-upnext">
+            <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+            Up Next
+          </div>
         </div>
       </div>
 
@@ -593,6 +596,56 @@
           <div class="cheat-item">
             <code>/clear</code>
             <span>Reset the conversation context. Use when Claude starts going in circles or forgetting earlier instructions.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cheat-group">
+        <div class="cheat-group-label">Git &amp; GitHub (Session 2)</div>
+        <div class="cheat-items">
+          <div class="cheat-item cheat-terminal">
+            <code>$ xcode-select --install</code>
+            <span>Install Apple's command line tools (includes Git). One-time setup — if it says "already installed," you're good.</span>
+          </div>
+          <div class="cheat-item cheat-terminal">
+            <code>$ brew install gh</code>
+            <span>Install the GitHub CLI. Lets you interact with GitHub from the terminal.</span>
+          </div>
+          <div class="cheat-item cheat-terminal">
+            <code>$ gh auth login</code>
+            <span>Authenticate with GitHub. Pick GitHub.com → HTTPS → Login via browser. Enter the one-time code it gives you.</span>
+          </div>
+          <div class="cheat-item cheat-terminal">
+            <code>$ git --version</code>
+            <span>Check if Git is installed. You should see a version number.</span>
+          </div>
+          <div class="cheat-item cheat-terminal">
+            <code>$ gh api user</code>
+            <span>Verify your GitHub connection. Shows your username and profile info.</span>
+          </div>
+          <div class="cheat-item">
+            <code>Commit</code>
+            <span>A snapshot of your code at a point in time — like a save point in a video game. Claude Code creates these for you.</span>
+          </div>
+          <div class="cheat-item">
+            <code>Branch</code>
+            <span>A parallel copy of the codebase. Make changes without affecting the original. Branch off <strong>main</strong> by default.</span>
+          </div>
+          <div class="cheat-item">
+            <code>Push / Pull</code>
+            <span><strong>Push</strong> = upload your changes to GitHub. <strong>Pull</strong> = download latest changes from GitHub. Keeps local and remote in sync.</span>
+          </div>
+          <div class="cheat-item">
+            <code>Pull Request (PR)</code>
+            <span>A formal request to merge your branch into main. Opens a conversation with engineering — they review, approve, and merge.</span>
+          </div>
+          <div class="cheat-item">
+            <code>Remote / Origin</code>
+            <span>Both mean GitHub (for now). It's where your code lives in the cloud.</span>
+          </div>
+          <div class="cheat-item cheat-highlight">
+            <code>Claude Code handles Git</code>
+            <span>You don't need to memorize commands. Tell Claude: <em>"Create a branch"</em>, <em>"Commit my changes"</em>, <em>"Am I behind the remote?"</em> — it speaks Git natively.</span>
           </div>
         </div>
       </div>

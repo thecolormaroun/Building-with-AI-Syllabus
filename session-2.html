@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 2: Git 101 + GitHub — AI Native</title>
+<meta name="description" content="Learn what Git is, how GitHub works, and set up your accounts. Core concepts: commits, branches, push/pull, and pull requests.">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3340;
+    --text: #e4e6eb;
+    --text-muted: #8b8fa3;
+    --accent: #6c5ce7;
+    --accent2: #a29bfe;
+    --green: #00b894;
+    --orange: #fdcb6e;
+    --pink: #fd79a8;
+    --blue: #74b9ff;
+    --teal: #81ecec;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Sticky Nav ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+  .sticky-nav.visible { display: flex; }
+  .sticky-nav a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .sticky-nav a:hover { color: var(--text); }
+  .sticky-nav .nav-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 72px 0 56px;
+    background: linear-gradient(135deg, rgba(108,92,231,0.15) 0%, rgba(162,155,254,0.05) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 28px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 1; }
+  .hero-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.15);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    max-width: 600px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+  .hero-meta .sep { opacity: 0.3; }
+
+  /* ── Sections ── */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-child { border-bottom: none; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+  section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Skills Learned ── */
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .skill-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: border-color 0.2s;
+  }
+  .skill-item:hover { border-color: rgba(108,92,231,0.3); }
+  .skill-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,184,148,0.15);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .skill-item span {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .skill-item strong { color: var(--accent2); }
+
+  .tldr-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .tldr-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+  .tldr-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .tldr-box h4 a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .tldr-box h4 a:hover { color: var(--accent2); }
+  .tldr-box p, .tldr-box li {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .tldr-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .tldr-box li { display: flex; flex-direction: row; gap: 8px; align-items: baseline; }
+  .tldr-box li::before { content: none; }
+  .tldr-box .link-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .tldr-box a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .tldr-box a:hover { opacity: 0.75; }
+
+  /* ── Video collapsible ── */
+  .video-details {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .video-details summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .video-details summary:hover { background: var(--surface2); }
+  .video-details summary::-webkit-details-marker { display: none; }
+  .video-details summary::before {
+    content: '▶';
+    font-size: 9px;
+    color: var(--accent2);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  .video-details[open] summary::before { transform: rotate(90deg); }
+  .video-details-inner {
+    border-top: 1px solid var(--border);
+    padding: 20px;
+  }
+  .video-embed-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+  }
+  .video-embed-wrap iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+    border-radius: 10px;
+  }
+
+  /* ── Video ── */
+  .video-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    border: 1px solid var(--border);
+  }
+  .video-wrap video {
+    width: 100%;
+    display: block;
+    border-radius: 12px;
+    max-height: 520px;
+  }
+  .video-fallback {
+    display: none;
+    padding: 48px 32px;
+    text-align: center;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .video-fallback .fallback-icon { font-size: 36px; margin-bottom: 12px; }
+  .video-fallback p { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+  .video-fallback a { color: var(--accent2); text-decoration: none; }
+  .video-caption {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ── Walkthrough ── */
+  .walkthrough-intro {
+    font-size: 15px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+  .walkthrough-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .walkthrough-controls button {
+    font-size: 13px;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.1);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+  .walkthrough-controls button:hover { background: rgba(108,92,231,0.2); }
+
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  details[open] { border-color: rgba(108,92,231,0.3); }
+  details summary {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px;
+    min-height: 56px;
+    user-select: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before {
+    content: '▶';
+    font-size: 9px;
+    color: var(--accent2);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary .step-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--accent2);
+    background: rgba(108,92,231,0.12);
+    padding: 3px 9px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+
+  .details-inner {
+    overflow: hidden;
+    padding: 20px 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  details:not([open]) .details-inner { display: none; }
+  details[open] .details-inner { display: block; }
+
+  .details-inner p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .details-inner p:last-child { margin-bottom: 0; }
+  .details-inner strong { color: var(--text); }
+  .details-inner code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+  .details-inner em { color: var(--text); font-style: italic; }
+
+  .watchout {
+    background: rgba(253,203,110,0.06);
+    border: 1px solid rgba(253,203,110,0.2);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .watchout strong { color: var(--orange); }
+
+  .concept-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .concept-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .concept-item .concept-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .concept-item p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 0 !important;
+  }
+
+  .quote-block {
+    background: rgba(108,92,231,0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--accent2);
+    line-height: 1.7;
+  }
+
+  /* ── Homework ── */
+  .homework-card {
+    background: linear-gradient(135deg, rgba(0,184,148,0.08) 0%, rgba(0,184,148,0.03) 100%);
+    border: 1px solid rgba(0,184,148,0.25);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .homework-card .hw-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .homework-card .hw-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(0,184,148,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .homework-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .homework-card .hw-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .hw-section { margin-bottom: 24px; }
+  .hw-section:last-child { margin-bottom: 0; }
+  .hw-section h4 {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+  .hw-section p, .hw-section li {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .hw-section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .hw-section li::before {
+    content: '→ ';
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .hw-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .hw-method {
+    background: rgba(0,184,148,0.06);
+    border: 1px solid rgba(0,184,148,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .hw-method .hw-method-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .hw-method p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 !important;
+  }
+  .hw-method strong { color: var(--text); }
+  .hw-method code {
+    background: rgba(0,184,148,0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--green);
+    font-family: 'SF Mono', monospace;
+  }
+
+  .pro-tip {
+    background: rgba(108,92,231,0.08);
+    border: 1px solid rgba(108,92,231,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pro-tip strong { color: var(--accent2); }
+
+  /* ── Scroll animations ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: none; }
+  }
+  .hero-content { animation: fadeUp 0.6s ease forwards; }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.5px; }
+    .tldr-grid { grid-template-columns: 1fr; }
+    details summary { min-height: 52px; padding: 14px 18px; }
+    .homework-card { padding: 22px; }
+    section { padding: 44px 0; }
+    .container { padding: 0 16px; }
+  }
+  @media (max-width: 960px) {
+    .container { padding: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sticky Nav (shown after hero scrolls away) -->
+<nav class="sticky-nav" id="sticky-nav" role="navigation" aria-label="Session navigation">
+  <a href="index.html">← AI Native</a>
+  <span class="nav-title">Session 2 — Git 101 + GitHub</span>
+</nav>
+
+<!-- Hero -->
+<header class="hero" id="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <a href="index.html" class="back-link">← AI Native</a>
+      <div class="hero-label">Session 2</div>
+      <h1>Git 101 + GitHub</h1>
+      <div class="hero-meta">
+        <span>March 31, 2026</span>
+        <span class="sep">·</span>
+        <span>~59 min</span>
+        <span class="sep">·</span>
+        <span>10 participants</span>
+        <span class="sep">·</span>
+        <span>Guest: Ryan Herubin</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Skills Learned -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Skills Learned</div>
+    <h2 class="fade-in">What we covered.</h2>
+
+    <div class="skills-list fade-in">
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Learned the <strong>four core Git concepts</strong>: commits, branches, push/pull, and pull requests</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Installed <strong>Git</strong> and the <strong>GitHub CLI</strong> on our machines</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Authenticated with <strong>GitHub</strong> from the terminal using <code style="font-family:monospace;font-size:13px;color:var(--accent2);background:rgba(108,92,231,0.1);padding:1px 6px;border-radius:4px;">gh auth login</code></span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Understood the difference between <strong>local</strong> (your computer) and <strong>remote</strong> (GitHub) — and how push/pull keeps them in sync</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Learned that <strong>pull requests are conversations</strong> — they're the handoff point between you and engineering</span>
+      </div>
+      <div class="skill-item">
+        <div class="skill-check">✓</div>
+        <span>Saw homework demos: Samara's <strong>Global Rollout Tracker</strong> (connected to JIRA, Amplitude, Sheets, Slack) and Rafa's <strong>Brand Guidelines</strong> site</span>
+      </div>
+    </div>
+
+    <div class="tldr-grid fade-in">
+      <div class="tldr-box">
+        <h4><a href="#homework-section">Homework ↓</a></h4>
+        <ul>
+          <li><span class="link-label">→ Make sure Git + GitHub CLI are installed</span></li>
+          <li><span class="link-label">→ Authenticate with GitHub</span></li>
+          <li><span class="link-label">→ Share your GitHub username in Slack</span></li>
+          <li><span class="link-label">→ Review Ryan's Git slides</span></li>
+          <li><span class="link-label">→ Try basic Git commands with Claude Code</span></li>
+        </ul>
+      </div>
+      <div class="tldr-box">
+        <h4>Key Resources</h4>
+        <ul>
+          <li><a href="lesson-2/intro-to-git.html" target="_blank">Ryan's Git Slides</a></li>
+          <li><span class="link-label" style="color:var(--text-muted)">Git concepts: commits, branches, push/pull, PRs</span></li>
+          <li><span class="link-label" style="color:var(--text-muted)">Setup: Xcode tools → brew install gh → gh auth login</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Full Video -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Full Session Recording</div>
+
+    <div class="fade-in">
+      <a href="https://fathom.video/share/x_b7PCZHRvjsW2k2JB_9oQZewxf4yFHZ" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:12px;padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:14px;text-decoration:none;color:var(--text);font-size:15px;font-weight:600;transition:border-color 0.2s, background 0.2s;">
+        <span style="font-size:20px;">▶</span>
+        <span>Watch the full session on Fathom</span>
+        <span style="margin-left:auto;font-size:13px;color:var(--accent2);opacity:0.7;">Opens in new tab ↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Highlight Clips -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Highlights</div>
+    <h2 class="fade-in">Key moments from the session.</h2>
+
+    <div class="steps-list fade-in">
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(253,121,168,0.12); color:var(--pink);">Demo</span>
+          Samara's Global Rollout Tracker
+        </summary>
+        <div class="details-inner">
+          <p>Samara built a dashboard connected to Google Sheets, Slack, Amplitude, and JIRA — managing the rollout of the Starter Dashboard across 17 markets with live data.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/01_samara_rollout_tracker.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(253,121,168,0.12); color:var(--pink);">Demo</span>
+          Rafa's Brand Guidelines Site
+        </summary>
+        <div class="details-inner">
+          <p>Rafa built a one-page brand guidelines reference — logos, colors, and assets accessible to anyone without needing Figma. Built with Visual Explainer and iterated with Agentation.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/02_rafa_brand_guidelines.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(116,185,255,0.12); color:var(--blue);">Lesson</span>
+          Ryan introduces Git & GitHub
+        </summary>
+        <div class="details-inner">
+          <p>Ryan kicks off the core lesson — commits, branches, push/pull, and pull requests. The four concepts that unlock collaboration.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/03_ryan_intro.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(116,185,255,0.12); color:var(--blue);">Lesson</span>
+          Maroun's Git concepts summary
+        </summary>
+        <div class="details-inner">
+          <p>Maroun distills the Git concepts into plain language: central codebase in the cloud, branches as local copies, and the sync process between local and remote.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/04_maroun_git_summary.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(116,185,255,0.12); color:var(--blue);">Lesson</span>
+          PRs are conversations, not code drops
+        </summary>
+        <div class="details-inner">
+          <p>Ryan explains that a pull request is a conversation with engineering — the ownership handoff where design meets code review. Engineers take it from there.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/05_prs_as_conversations.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(0,184,148,0.12); color:var(--green);">Wrap-up</span>
+          What's coming next
+        </summary>
+        <div class="details-inner">
+          <p>Maroun wraps the session and previews Session 3: hands-on Git practice where everyone pulls down a shared repo, creates branches, and pushes changes back.</p>
+          <div style="margin-top:12px; border-radius:10px; overflow:hidden; background:#000; border:1px solid var(--border);">
+            <video controls preload="metadata" style="width:100%; display:block; border-radius:10px; max-height:400px;">
+              <source src="assets/videos/session-2/06_wrapup_whats_next.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Written Walkthrough -->
+<section>
+  <div class="container">
+    <div class="section-label fade-in">Walkthrough</div>
+    <h2 class="fade-in">What Git is and how to set it up.</h2>
+
+    <p class="walkthrough-intro fade-in">
+      Everything Ryan and Maroun covered in Session 2, written out for reference. If you missed the class or want a refresher on the concepts, work through these sections at your own pace.
+    </p>
+
+    <div class="walkthrough-controls fade-in">
+      <button onclick="expandAll()">Expand all</button>
+      <button onclick="collapseAll()">Collapse all</button>
+    </div>
+
+    <div class="steps-list fade-in">
+
+      <!-- Concept 1: What is Git? -->
+      <details>
+        <summary>
+          <span class="step-num">Concept</span>
+          What is Git (and why should you care)?
+        </summary>
+        <div class="details-inner">
+          <p><strong>Git</strong> is a version control system — it tracks every change you make to your code. Think of it like a detailed undo history that never goes away.</p>
+          <p><strong>GitHub</strong> is the cloud platform where your Git projects (called <strong>repositories</strong> or <strong>repos</strong>) are stored and shared. It's where collaboration happens.</p>
+          <p>Why this matters for you:</p>
+          <div class="concept-list">
+            <div class="concept-item">
+              <div class="concept-label">Collaboration</div>
+              <p>Git is how you share code with engineers and other builders. When your prototype is ready for production, Git is the handoff mechanism.</p>
+            </div>
+            <div class="concept-item">
+              <div class="concept-label">Safety net</div>
+              <p>Every change is saved. You can always go back to a previous version. No more "I accidentally deleted everything" panic.</p>
+            </div>
+            <div class="concept-item">
+              <div class="concept-label">Parallel universes</div>
+              <p>Branches let you (and AI agents) explore different directions without affecting the main codebase. Pick the one you like, discard the rest.</p>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Concept 2: Commits -->
+      <details>
+        <summary>
+          <span class="step-num">Concept</span>
+          Commits — save points for your code
+        </summary>
+        <div class="details-inner">
+          <p>A <strong>commit</strong> is a snapshot of your code at a specific point in time. Think of it like a save point in a video game — you can always go back to it.</p>
+          <p>Each commit has a <strong>message</strong> that describes what changed. Good commit messages help you (and others) understand the history of the project.</p>
+          <div class="quote-block">"Add yellow background to hero section" is a good commit message. "Changes" is not.</div>
+          <p>You don't need to manually create commits — <strong>Claude Code will do this for you</strong>. Just tell it to commit your changes and it'll write a sensible message.</p>
+        </div>
+      </details>
+
+      <!-- Concept 3: Branches -->
+      <details>
+        <summary>
+          <span class="step-num">Concept</span>
+          Branches — parallel copies of your code
+        </summary>
+        <div class="details-inner">
+          <p>A <strong>branch</strong> is a copy of the codebase that you can change without affecting the original.</p>
+          <p>The <strong>main</strong> branch is the central, "official" version of the code. When you want to work on something, you create a new branch off of main, make your changes there, and then bring those changes back when you're ready.</p>
+          <div class="concept-list">
+            <div class="concept-item">
+              <div class="concept-label">For prototyping</div>
+              <p>You can create a branch, experiment to your heart's content, and it only lives on your computer until you push it. Nobody else sees your work until you're ready.</p>
+            </div>
+            <div class="concept-item">
+              <div class="concept-label">For collaboration</div>
+              <p>If Jen and Lizzie are both working on the same project, they can each have their own branch. When Lizzie finishes, she pushes to GitHub. Jen pulls those changes down and keeps working.</p>
+            </div>
+          </div>
+          <p>To create a branch, just tell Claude Code: <em>"Create a new branch called my-feature"</em>. It handles the Git command for you.</p>
+        </div>
+      </details>
+
+      <!-- Concept 4: Push & Pull -->
+      <details>
+        <summary>
+          <span class="step-num">Concept</span>
+          Push & Pull — syncing local and remote
+        </summary>
+        <div class="details-inner">
+          <p>There are two copies of your code: what's on <strong>your computer</strong> (local) and what's on <strong>GitHub</strong> (remote). Push and pull keep them in sync.</p>
+          <div class="concept-list">
+            <div class="concept-item">
+              <div class="concept-label">Push</div>
+              <p>Upload your local changes to GitHub. After you've made commits, push them so others can see your work.</p>
+            </div>
+            <div class="concept-item">
+              <div class="concept-label">Pull</div>
+              <p>Download the latest changes from GitHub to your computer. Do this to get changes your collaborators have pushed.</p>
+            </div>
+          </div>
+          <div class="watchout"><strong>⚠️ Key distinction:</strong> "Pull" (downloading changes) is different from "Pull Request" (a formal review process). They just share a name — don't let that trip you up.</div>
+          <p>You'll hear the words <strong>remote</strong> and <strong>origin</strong> — for now, they both mean GitHub. There's a world where they can be different, but we're not going there yet.</p>
+          <p>To check if you're up to date, just ask Claude Code: <em>"Am I behind the remote branch?"</em></p>
+        </div>
+      </details>
+
+      <!-- Concept 5: Pull Requests -->
+      <details>
+        <summary>
+          <span class="step-num">Concept</span>
+          Pull Requests — the handoff to engineering
+        </summary>
+        <div class="details-inner">
+          <p>A <strong>pull request (PR)</strong> is a formal request to merge your branch into the main codebase. But more importantly, it's a <strong>conversation</strong>.</p>
+          <p>When you create a PR, you're saying: <em>"Hey engineering, here's what I've built. Let's talk about it."</em></p>
+          <div class="concept-list">
+            <div class="concept-item">
+              <div class="concept-label">Ownership handoff</div>
+              <p>When you create a PR, ownership of the code transfers to the engineer. They review it, contribute to it, discuss changes, and ultimately approve and merge it.</p>
+            </div>
+            <div class="concept-item">
+              <div class="concept-label">You don't merge</div>
+              <p>The engineer handles merging, QA, and the release pipeline. Especially in Corgi (our main codebase), there are CI/CD processes you don't need to worry about.</p>
+            </div>
+          </div>
+          <p><strong>For prototypes:</strong> The PR process matters less. You're working in your own isolated environment and Claude Code handles branching for you. PRs become important when your work is heading to production.</p>
+        </div>
+      </details>
+
+      <!-- Setup Step 1 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 1</span>
+          Install Git (Xcode command line tools)
+        </summary>
+        <div class="details-inner">
+          <p>Open <strong>Terminal</strong> and run:</p>
+          <div class="quote-block" style="font-style:normal;"><code>xcode-select --install</code></div>
+          <p>This installs Apple's command line developer tools, which includes Git. If you've already done this, it'll tell you it's already installed — that's fine.</p>
+          <p>Verify it worked by running <code>git --version</code>. You should see a version number.</p>
+        </div>
+      </details>
+
+      <!-- Setup Step 2 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 2</span>
+          Install GitHub CLI
+        </summary>
+        <div class="details-inner">
+          <p>The GitHub CLI (<code>gh</code>) lets you interact with GitHub from the terminal. Install it with Homebrew:</p>
+          <div class="quote-block" style="font-style:normal;"><code>brew install gh</code></div>
+          <p>If you don't have Homebrew yet, Claude Code can install it for you — just ask.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> If <code>brew</code> gives you a "command not found" error, you need to install Homebrew first. Ask Claude Code: <em>"Install Homebrew for me."</em></div>
+        </div>
+      </details>
+
+      <!-- Setup Step 3 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 3</span>
+          Authenticate with GitHub
+        </summary>
+        <div class="details-inner">
+          <p>Run this in your terminal:</p>
+          <div class="quote-block" style="font-style:normal;"><code>gh auth login</code></div>
+          <p>You'll be asked a series of questions. Here's what to pick:</p>
+          <ul style="list-style:none; padding:0; margin:12px 0; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:14px; color:var(--text-muted);">→ <strong>Where do you use GitHub?</strong> → GitHub.com</li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <strong>Preferred protocol?</strong> → HTTPS</li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <strong>How to authenticate?</strong> → Login with a web browser</li>
+          </ul>
+          <p>It will give you a one-time code and open a browser window. Enter the code, authorize the app, and you're connected.</p>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> Remember — mouse doesn't work in the terminal. Use arrow keys to navigate and Enter to select. If you're stuck, try the keyboard shortcut <strong>Option+Arrow</strong> to jump between words.</div>
+          <div class="watchout"><strong>⚠️ Watch out:</strong> If you get "command not found" after installing <code>gh</code>, try closing and reopening your terminal window first.</div>
+        </div>
+      </details>
+
+      <!-- Setup Step 4 -->
+      <details>
+        <summary>
+          <span class="step-num">Step 4</span>
+          Verify your setup
+        </summary>
+        <div class="details-inner">
+          <p>Run this to confirm everything is working:</p>
+          <div class="quote-block" style="font-style:normal;"><code>gh api user</code></div>
+          <p>This should show your GitHub username and profile info. If it does — you're all set.</p>
+          <p>Share your GitHub username in the <strong>#tmp-ai-builders-curriculum</strong> Slack channel so Maroun can add you to the shared repo for next session.</p>
+        </div>
+      </details>
+
+      <!-- Using Git with Claude Code -->
+      <details>
+        <summary>
+          <span class="step-num" style="background:rgba(0,184,148,0.12); color:var(--green);">Pro Tip</span>
+          You don't need to memorize Git commands
+        </summary>
+        <div class="details-inner">
+          <p>Claude Code understands Git natively. You can use natural language for everything:</p>
+          <ul style="list-style:none; padding:0; margin:12px 0; display:flex; flex-direction:column; gap:8px;">
+            <li style="font-size:14px; color:var(--text-muted);">→ <em>"Create a new branch called experiment-1"</em></li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <em>"Commit my changes with a message describing what I did"</em></li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <em>"Am I behind the remote branch?"</em></li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <em>"Push my changes to GitHub"</em></li>
+            <li style="font-size:14px; color:var(--text-muted);">→ <em>"Show me the git status"</em></li>
+          </ul>
+          <p>Ryan mentioned this in class: <em>"You don't need to know any special terminal commands. Claude makes this way, way better. I do this now even."</em></p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- Homework -->
+<section id="homework-section">
+  <div class="container">
+    <div class="section-label fade-in">Homework</div>
+    <h2 class="fade-in">Your assignment before Session 3.</h2>
+
+    <div class="homework-card fade-in">
+      <div class="hw-header">
+        <div class="hw-icon">📬</div>
+        <div>
+          <h3>Get set up for hands-on Git</h3>
+          <div class="hw-sub">Session 3 starts with everyone pulling down the same repo</div>
+        </div>
+      </div>
+
+      <div class="hw-section">
+        <h4>Must-do: Setup checklist</h4>
+        <ul>
+          <li>Git installed — run <code style="font-family:monospace;font-size:12px;color:var(--green);background:rgba(0,184,148,0.1);padding:1px 6px;border-radius:4px;">git --version</code> to verify</li>
+          <li>GitHub CLI installed — run <code style="font-family:monospace;font-size:12px;color:var(--green);background:rgba(0,184,148,0.1);padding:1px 6px;border-radius:4px;">gh --version</code> to verify</li>
+          <li>Authenticated with GitHub — run <code style="font-family:monospace;font-size:12px;color:var(--green);background:rgba(0,184,148,0.1);padding:1px 6px;border-radius:4px;">gh auth status</code> to verify</li>
+          <li>Shared your GitHub username in <strong>#tmp-ai-builders-curriculum</strong></li>
+        </ul>
+      </div>
+
+      <div class="hw-section">
+        <h4>Review the slides</h4>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.7;">Open <a href="lesson-2/intro-to-git.html" style="color:var(--accent2);text-decoration:none;font-weight:600;">Ryan's interactive Git slides</a> and click through the core concepts at your own pace. Use arrow keys or click to navigate.</p>
+      </div>
+
+      <div class="hw-section">
+        <h4>Optional: Try Git with Claude Code</h4>
+        <div class="hw-methods">
+          <div class="hw-method">
+            <div class="hw-method-num">01 — Initialize a repo</div>
+            <p>Tell Claude Code: <strong>"Initialize a git repo in this folder."</strong> This sets up Git tracking for your project.</p>
+          </div>
+          <div class="hw-method">
+            <div class="hw-method-num">02 — Create a branch</div>
+            <p>Tell Claude Code: <strong>"Create a new branch called my-experiment."</strong> This creates a parallel copy for you to play with.</p>
+          </div>
+          <div class="hw-method">
+            <div class="hw-method-num">03 — Commit your changes</div>
+            <p>Tell Claude Code: <strong>"Commit my changes with a descriptive message."</strong> This creates a save point you can always return to.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hw-section">
+        <h4>Keep building</h4>
+        <p style="color:var(--text-muted); font-size:14px; line-height:1.7;">Keep iterating on your project using the three methods from Session 1: <strong>/lfg</strong> for full rebuilds, <strong>voice dump → Claude Code</strong> for quick passes, and <strong>Agentation</strong> for element-level feedback.</p>
+      </div>
+
+      <div class="hw-section">
+        <h4>What's coming in Session 3</h4>
+        <div class="pro-tip">
+          <strong>Hands-on Git practice.</strong> We'll all pull down the same repo, create branches, make changes to assigned sections, and push them back. We'll also introduce <strong>worktrees</strong> — spinning up multiple agents to iterate on the same codebase in parallel.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <p>AI Native · Change.org Design &amp; Product · 2026 · Share in <strong>#pd-design-ai-tips</strong></p>
+  </div>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Sticky nav — show when hero scrolls out
+  const heroSection = document.getElementById('hero-section');
+  const stickyNav = document.getElementById('sticky-nav');
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      stickyNav.classList.toggle('visible', !entry.isIntersecting);
+    });
+  }, { threshold: 0 });
+  navObserver.observe(heroSection);
+
+  // Expand / Collapse all
+  function expandAll() {
+    document.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+  }
+  function collapseAll() {
+    document.querySelectorAll('details').forEach(d => d.removeAttribute('open'));
+  }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intro to Git</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #f5f0e8;
+    --accent: #e84b1a;
+    --accent2: #2a6ee8;
+    --accent3: #1aaa5b;
+    --muted: #7a7065;
+    --line: #d5cfc3;
+    --commit: #f5c842;
+    --branch: #e84b1a;
+    --remote: #2a6ee8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--ink);
+    color: var(--ink);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #deck {
+    width: 100vw;
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(40px);
+    pointer-events: none;
+    transition: opacity 0.45s cubic-bezier(.4,0,.2,1), transform 0.45s cubic-bezier(.4,0,.2,1);
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  /* ---- nav ---- */
+  #nav {
+    position: relative;
+    align-self: center;
+    margin: 16px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 22px;
+    border-radius: 40px;
+    z-index: 100;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  #nav button {
+    background: none;
+    border: none;
+    color: var(--paper);
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 4px;
+    opacity: .7;
+    transition: opacity .2s;
+  }
+  #nav button:hover { opacity: 1; }
+  #nav span { opacity: .5; }
+
+  /* ---- back to curriculum ---- */
+  .back-to-curriculum {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--paper);
+    background: rgba(15,15,15,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, background 0.2s;
+  }
+  .back-to-curriculum:hover { opacity: 1; background: rgba(15,15,15,0.95); }
+  #slide-num { min-width: 48px; text-align: center; }
+
+  .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(245,240,232,.25);
+    transition: background .3s;
+    cursor: pointer;
+  }
+  .dot.on { background: var(--paper); }
+
+  /* ---- layout helpers ---- */
+  .ruled-top {
+    border-top: 2.5px solid var(--ink);
+  }
+  .ruled-bottom {
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ============================================================
+     SLIDE 1 – TITLE
+  ============================================================ */
+  #s1 {
+    background: var(--ink);
+    color: var(--paper);
+    justify-content: center;
+    padding: 0 80px;
+    gap: 0;
+  }
+  #s1 .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+  #s1 h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 7vw, 100px);
+    font-weight: 900;
+    line-height: .95;
+    letter-spacing: -.03em;
+    margin-bottom: 40px;
+  }
+  #s1 h1 em { color: var(--accent); font-style: normal; }
+  #s1 .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(245,240,232,.6);
+    max-width: 480px;
+    line-height: 1.6;
+    margin-bottom: 64px;
+  }
+  .tag-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    border: 1px solid rgba(245,240,232,.2);
+    color: rgba(245,240,232,.5);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+  }
+  #s1 .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,240,232,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  /* ============================================================
+     SLIDE 2 – WHAT IS GIT
+  ============================================================ */
+  #s2 {
+    padding: 56px 80px;
+    gap: 48px;
+  }
+  .slide-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+  }
+  .slide-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 700;
+  }
+  .slide-header .num {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .1em;
+  }
+
+  .analogy-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+  }
+  .analogy-card {
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .analogy-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .analogy-card:nth-child(1)::before { background: var(--accent); }
+  .analogy-card:nth-child(2)::before { background: var(--accent2); }
+  .analogy-card:nth-child(3)::before { background: var(--accent3); }
+
+  .analogy-icon { font-size: 36px; }
+  .analogy-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .analogy-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .analogy-card .mono {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-top: auto;
+  }
+
+  /* ============================================================
+     SLIDE 3 – COMMITS
+  ============================================================ */
+  #s3 {
+    padding: 56px 80px;
+    gap: 40px;
+  }
+  .commit-visual {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    position: relative;
+  }
+  .commit-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  .commit-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--commit);
+    border: 3px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    box-shadow: 4px 4px 0 var(--ink);
+    cursor: pointer;
+    transition: transform .2s;
+  }
+  .commit-circle:hover { transform: scale(1.1); }
+  .commit-circle.highlight {
+    background: var(--accent);
+    color: var(--paper);
+  }
+  .commit-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    max-width: 100px;
+    text-align: center;
+  }
+  .commit-arrow {
+    flex: 1;
+    height: 3px;
+    background: var(--ink);
+    position: relative;
+    margin-bottom: 40px;
+    min-width: 40px;
+  }
+  .commit-arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -5px;
+    border: 6px solid transparent;
+    border-left: 10px solid var(--ink);
+  }
+
+  .commit-info {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 12px;
+    padding: 28px 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .commit-info h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    grid-column: 1/-1;
+    margin-bottom: 4px;
+  }
+  .info-item label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .info-item span {
+    font-size: 14px;
+    color: rgba(245,240,232,.8);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ============================================================
+     SLIDE 4 – BRANCHES
+  ============================================================ */
+  #s4 {
+    padding: 56px 80px;
+    gap: 36px;
+  }
+  .branch-diagram {
+    flex: 1;
+    position: relative;
+  }
+  .branch-diagram svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ============================================================
+     SLIDE 5 – PUSH & PULL
+  ============================================================ */
+  #s5 {
+    padding: 56px 80px;
+    gap: 40px;
+  }
+  .push-pull-layout {
+    display: grid;
+    grid-template-columns: 1fr 120px 1fr;
+    gap: 0;
+    flex: 1;
+    align-items: center;
+  }
+  .repo-box {
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+  }
+  .repo-box.local { background: var(--paper); }
+  .repo-box.remote { background: var(--ink); color: var(--paper); }
+  .repo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .local .repo-label { color: var(--accent); }
+  .remote .repo-label { color: var(--accent); }
+  .repo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .repo-desc {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.6;
+    opacity: .7;
+  }
+  .mini-commits {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+    flex-wrap: wrap;
+  }
+  .mini-commit {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .local .mini-commit { background: var(--commit); border: 2px solid var(--ink); }
+  .remote .mini-commit { background: rgba(245,240,232,.15); border: 2px solid rgba(245,240,232,.3); color: var(--paper); }
+
+  .arrows-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  .action-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-arrow .arrow-icon {
+    font-size: 28px;
+  }
+  .action-arrow .arrow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .push-color { color: var(--accent); }
+  .pull-color { color: var(--accent2); }
+
+  /* ============================================================
+     SLIDE 6 – PULL REQUEST
+  ============================================================ */
+  #s6 {
+    padding: 56px 80px;
+    gap: 36px;
+  }
+  .pr-flow {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    flex: 1;
+  }
+  .pr-step {
+    flex: 1;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+  }
+  .pr-step + .pr-step {
+    margin-left: -1px;
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+  }
+  .pr-step:first-child { border-radius: 12px 0 0 12px; }
+  .pr-connector {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    flex: 0 0 40px;
+  }
+  .pr-connector svg { width: 40px; }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .pr-step h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .pr-step p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .pr-step .cmd {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--ink);
+    color: var(--commit);
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: auto;
+  }
+
+  .pr-merge-visual {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    color: var(--paper);
+  }
+  .pr-merge-visual .icon { font-size: 40px; }
+  .pr-merge-visual h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .pr-merge-visual p {
+    font-size: 14px;
+    opacity: .6;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* ============================================================
+     SLIDE 7 – FULL WORKFLOW
+  ============================================================ */
+  #s7 {
+    padding: 48px 64px;
+    gap: 32px;
+  }
+  .workflow-diagram {
+    flex: 1;
+    position: relative;
+  }
+  .workflow-diagram svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ============================================================
+     SLIDE 8 – WORKFLOW
+  ============================================================ */
+  #s8 {
+    padding: 48px 80px 40px;
+    gap: 28px;
+  }
+  .workflow-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+  }
+  .workflow-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid var(--line);
+  }
+  .workflow-phase {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    font-weight: 500;
+  }
+  .workflow-phase.phase-branch { background: rgba(232,75,26,.12); color: var(--accent); }
+  .workflow-phase.phase-commit { background: rgba(245,200,66,.12); color: #a07c00; border-top: 1px solid var(--line); }
+  .workflow-phase.phase-sync   { background: rgba(42,110,232,.1);  color: var(--accent2); }
+  .workflow-phase.phase-pr     { background: rgba(26,170,91,.1);   color: var(--accent3); border-top: 1px solid var(--line); }
+  .wf-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--line);
+  }
+  .wf-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--commit);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .wf-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .wf-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink);
+    opacity: .75;
+  }
+  .wf-cmd {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .wf-cmd.green { color: var(--accent3); }
+  .wf-arrow {
+    font-size: 11px;
+    color: var(--muted);
+    opacity: .4;
+  }
+
+  /* ============================================================
+     SLIDE 2 – INSTALL GIT
+  ============================================================ */
+  #s-install {
+    padding: 56px 80px;
+    gap: 36px;
+  }
+  .install-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    justify-content: center;
+  }
+  .install-step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 20px 24px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+  }
+  .install-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .install-step-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+  }
+  .install-step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .install-step-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .install-cmd {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--ink);
+    color: var(--commit);
+    padding: 6px 14px;
+    border-radius: 6px;
+    margin-top: 4px;
+    width: fit-content;
+  }
+  .install-note {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    line-height: 1.6;
+  }
+
+  /* ============================================================
+     INTERSTITIAL SLIDES – CLAUDE CODE PROMPTS
+  ============================================================ */
+  .cc-slide {
+    background: var(--ink) !important;
+    color: var(--paper);
+    padding: 52px 80px;
+    gap: 24px;
+    justify-content: center;
+  }
+  .cc-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: #9d8fef;
+  }
+  .cc-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1.15;
+    max-width: 680px;
+  }
+  .cc-headline em { color: #9d8fef; font-style: normal; }
+  .cc-subhead {
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(245,240,232,.4);
+    font-family: 'DM Mono', monospace;
+    margin-top: -4px;
+  }
+  .cc-prompts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 780px;
+  }
+  .cc-prompt {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: rgba(245,240,232,.05);
+    border: 1px solid rgba(245,240,232,.1);
+    border-radius: 10px;
+    padding: 14px 20px;
+    transition: border-color .2s, background .2s;
+    cursor: default;
+  }
+  .cc-prompt:hover {
+    border-color: rgba(157,143,239,.45);
+    background: rgba(157,143,239,.07);
+  }
+  .cc-cursor {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: #9d8fef;
+    flex-shrink: 0;
+    line-height: 1.55;
+    user-select: none;
+  }
+  .cc-prompt-text {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--paper);
+    line-height: 1.55;
+  }
+  .cc-footer {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(245,240,232,.22);
+    margin-top: 8px;
+  }
+
+</style>
+</head>
+<body>
+
+<a href="../session-2.html" class="back-to-curriculum">← Back to Session 2</a>
+
+<div id="deck">
+
+  <!-- SLIDE 1: TITLE -->
+  <div class="slide active" id="s1">
+    <div class="grid-bg"></div>
+    <div class="eyebrow">A Visual Guide for Designers</div>
+    <h1>Git &<br><em>GitHub</em><br>Explained.</h1>
+    <p class="subtitle">A plain-language walkthrough of version control — how your team tracks changes, collaborates, and ships without chaos.</p>
+    <div class="tag-row">
+      <span class="tag">Commits</span>
+      <span class="tag">Branches</span>
+      <span class="tag">Push & Pull</span>
+      <span class="tag">Pull Requests</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: INSTALL GIT -->
+  <div class="slide" id="s-install">
+    <div class="slide-header">
+      <h2>Getting Set Up — Install Git</h2>
+      <span class="num">Mac Setup</span>
+    </div>
+    <div class="install-steps">
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-body">
+          <span class="install-step-title">Open Terminal</span>
+          <span class="install-step-desc">Press <strong>⌘ Space</strong> to open Spotlight, type <strong>Terminal</strong>, and hit Enter. This is the command line — don't worry, you'll only need it for this one step.</span>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-body">
+          <span class="install-step-title">Install Git</span>
+          <span class="install-step-desc">Type one of these commands and press Enter. Use the first if you don't have Homebrew, or the second if you do.</span>
+          <span class="install-cmd">xcode-select --install</span>
+          <span class="install-step-desc" style="margin-top:6px">— or, if you have Homebrew —</span>
+          <span class="install-cmd">brew install git</span>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-body">
+          <span class="install-step-title">Install if needed</span>
+          <span class="install-step-desc">If git isn't found, macOS will automatically pop up a dialog asking to install the Developer Tools. Click <strong>Install</strong> and follow the prompts — it takes about 2 minutes.</span>
+          <span class="install-cmd">xcode-select --install</span>
+        </div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-body">
+          <span class="install-step-title">Confirm it worked</span>
+          <span class="install-step-desc">Run the check again. You should now see a version number — git is ready to go.</span>
+          <span class="install-cmd">git --version</span>
+        </div>
+      </div>
+    </div>
+    <p class="install-note">✦ &nbsp;Already have <strong>Homebrew</strong> installed? You can also run <code style="font-family:'DM Mono',monospace;font-size:12px;background:rgba(15,15,15,.07);padding:1px 6px;border-radius:4px">brew install git</code> instead of step 3.</p>
+  </div>
+
+  <!-- SLIDE 2: WHAT IS GIT -->
+  <div class="slide" id="s2">
+    <div class="slide-header">
+      <h2>What is Git?</h2>
+      <span class="num">01 / 07</span>
+    </div>
+    <div class="analogy-grid">
+      <div class="analogy-card">
+        <div class="analogy-icon">📸</div>
+        <h3>A Time Machine</h3>
+        <p>Git takes snapshots of your project at every save point. You can travel back to any moment — nothing is ever truly lost.</p>
+        <div class="mono">→ Every save = a commit</div>
+      </div>
+      <div class="analogy-card">
+        <div class="analogy-icon">🌿</div>
+        <h3>A Parallel Universe</h3>
+        <p>You can spin up a separate "branch" to try ideas without touching the stable codebase. Experiment freely, then merge what works.</p>
+        <div class="mono">→ Experiments = branches</div>
+      </div>
+      <div class="analogy-card">
+        <div class="analogy-icon">☁️</div>
+        <h3>A Shared Drive — With History</h3>
+        <p>GitHub is the cloud home for your git project. Your whole team syncs to it. Unlike Dropbox, it tracks every single change, by whom, and why.</p>
+        <div class="mono">→ GitHub = remote backup + team hub</div>
+      </div>
+    </div>
+    <div style="font-size:14px;color:var(--muted);font-weight:300;line-height:1.6;border-top:1px solid var(--line);padding-top:16px;">
+      <strong style="color:var(--ink)">Git</strong> is the tool on your computer. &nbsp;|&nbsp; <strong style="color:var(--ink)">GitHub</strong> is the website where you store and share your git project online.
+    </div>
+  </div>
+
+  <!-- CC SLIDE 2: Read commit history -->
+  <div class="slide cc-slide" id="cc2">
+    <div class="cc-eyebrow">↯ Try it in Claude Code</div>
+    <h2 class="cc-headline">Let Claude <em>read the history</em><br>so you don't have to.</h2>
+    <p class="cc-subhead">After "What is Git?" — explore the project's past →</p>
+    <div class="cc-prompts">
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Show me the last 10 commits and summarize what changed in each one.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Which files have been changed most frequently in this repo?</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Who last changed the homepage and what did their commit message say?</span>
+      </div>
+    </div>
+    <p class="cc-footer">Claude can translate git log output into plain English for you.</p>
+  </div>
+
+  <!-- SLIDE 4: BRANCHES -->
+  <div class="slide" id="s4">
+    <div class="slide-header">
+      <h2>Branches — Parallel Work</h2>
+      <span class="num">03 / 07</span>
+    </div>
+    <div class="branch-diagram">
+      <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+        <!-- main line -->
+        <line x1="60" y1="100" x2="840" y2="100" stroke="#0f0f0f" stroke-width="3"/>
+        <!-- dashed curves drawn first so commit circles render on top -->
+        <!-- branch off point -->
+        <path d="M 340 100 Q 340 200 420 200" stroke="#e84b1a" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+        <!-- merge back -->
+        <path d="M 680 200 Q 720 200 740 100" stroke="#e84b1a" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+        <!-- feature branch line -->
+        <line x1="420" y1="200" x2="680" y2="200" stroke="#e84b1a" stroke-width="3"/>
+        <!-- main commits -->
+        <circle cx="100" cy="100" r="22" fill="#f5c842" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="100" y="105" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0f0f0f">a1b2</text>
+        <circle cx="220" cy="100" r="22" fill="#f5c842" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="220" y="105" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0f0f0f">c3d4</text>
+        <circle cx="340" cy="100" r="22" fill="#f5c842" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="340" y="105" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0f0f0f">e5f6</text>
+        <!-- feature commits -->
+        <circle cx="480" cy="200" r="22" fill="#e84b1a" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="480" y="205" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5f0e8">f1x2</text>
+        <circle cx="600" cy="200" r="22" fill="#e84b1a" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="600" y="205" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5f0e8">g3h4</text>
+        <!-- merge commit -->
+        <circle cx="740" cy="100" r="22" fill="#1aaa5b" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="740" y="105" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5f0e8">m5n6</text>
+        <!-- continuing main -->
+        <circle cx="840" cy="100" r="22" fill="#f5c842" stroke="#0f0f0f" stroke-width="2.5"/>
+        <text x="840" y="105" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#0f0f0f">p7q8</text>
+
+        <!-- labels -->
+        <rect x="52" y="58" width="106" height="24" rx="4" fill="#0f0f0f"/>
+        <text x="105" y="75" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5c842" letter-spacing="1">main</text>
+
+        <rect x="380" y="162" width="160" height="24" rx="4" fill="#e84b1a"/>
+        <text x="460" y="179" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5f0e8" letter-spacing="1">feature/new-hero</text>
+
+        <rect x="696" y="58" width="88" height="24" rx="4" fill="#1aaa5b"/>
+        <text x="740" y="75" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#f5f0e8" letter-spacing="1">merge!</text>
+
+        <!-- commit descriptions -->
+        <text x="100" y="140" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Initial</text>
+        <text x="220" y="140" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Nav done</text>
+        <text x="340" y="140" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Branch off ↙</text>
+        <text x="480" y="240" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Hero draft</text>
+        <text x="600" y="240" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Hero refined</text>
+        <text x="740" y="140" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Merged ✓</text>
+        <text x="840" y="140" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#7a7065">Hotfix</text>
+
+        <!-- annotation boxes -->
+        <rect x="60" y="290" width="280" height="36" rx="6" fill="#f5c842" opacity=".2" stroke="#f5c842" stroke-width="1.5"/>
+        <text x="200" y="313" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#0f0f0f">🟡 base branch stays stable &amp; shippable</text>
+
+        <rect x="380" y="290" width="300" height="36" rx="6" fill="#e84b1a" opacity=".15" stroke="#e84b1a" stroke-width="1.5"/>
+        <text x="530" y="313" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#0f0f0f">🔴 branch = safe sandbox</text>
+
+        <rect x="710" y="290" width="180" height="36" rx="6" fill="#1aaa5b" opacity=".15" stroke="#1aaa5b" stroke-width="1.5"/>
+        <text x="800" y="313" text-anchor="middle" font-family="DM Sans" font-size="13" fill="#0f0f0f">🟢 merge = joined!</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- CC SLIDE 4: Branching with Claude -->
+  <div class="slide cc-slide" id="cc4">
+    <div class="cc-eyebrow">↯ Try it in Claude Code</div>
+    <h2 class="cc-headline">Let Claude <em>create and switch</em><br>branches for you.</h2>
+    <p class="cc-subhead">After "Branches" — spin up a safe sandbox in seconds →</p>
+    <div class="cc-prompts">
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Create a branch for my bug fix.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Create a branch for my new feature. Help me name it.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Create a new branch called feature/new-header and switch me to it.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">What branch am I on right now, and how does it differ from main?</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Switch me back to the main branch.</span>
+      </div>
+    </div>
+    <p class="cc-footer">Ask your tech lead which branch to start from — Claude will do the rest.</p>
+  </div>
+
+  <!-- SLIDE 3: COMMITS -->
+  <div class="slide" id="s3">
+    <div class="slide-header">
+      <h2>Commits — Saving Snapshots</h2>
+      <span class="num">02 / 07</span>
+    </div>
+    <div class="commit-visual">
+      <div class="commit-node">
+        <div class="commit-circle">a1b2</div>
+        <div class="commit-label">Initial files added</div>
+      </div>
+      <div class="commit-arrow"></div>
+      <div class="commit-node">
+        <div class="commit-circle">c3d4</div>
+        <div class="commit-label">Nav component</div>
+      </div>
+      <div class="commit-arrow"></div>
+      <div class="commit-node">
+        <div class="commit-circle">e5f6</div>
+        <div class="commit-label">Hero section</div>
+      </div>
+      <div class="commit-arrow"></div>
+      <div class="commit-node">
+        <div class="commit-circle highlight">g7h8</div>
+        <div class="commit-label">Fixes font size</div>
+      </div>
+      <div class="commit-arrow" style="border-right:3px dashed var(--muted);height:3px;background:none;flex:0.3;margin-bottom:40px;"></div>
+      <div class="commit-node" style="opacity:.35">
+        <div class="commit-circle" style="border-style:dashed">next</div>
+        <div class="commit-label">In progress…</div>
+      </div>
+    </div>
+    <div class="commit-info">
+      <h3>What's inside a commit?</h3>
+      <div class="info-item">
+        <label>ID (hash)</label>
+        <span>g7h8c921a…</span>
+      </div>
+      <div class="info-item">
+        <label>Author</label>
+        <span>jamie@studio.io</span>
+      </div>
+      <div class="info-item">
+        <label>Timestamp</label>
+        <span>March 30, 2026 — 14:22</span>
+      </div>
+      <div class="info-item">
+        <label>Message</label>
+        <span>fix: increase body font to 16px</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CC SLIDE 3: Committing with Claude -->
+  <div class="slide cc-slide" id="cc3">
+    <div class="cc-eyebrow">↯ Try it in Claude Code</div>
+    <h2 class="cc-headline">Let Claude <em>stage and commit</em><br>your changes.</h2>
+    <p class="cc-subhead">After "Commits" — save your work without memorizing commands →</p>
+    <div class="cc-prompts">
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Stage all my changes and commit them — write a message based on what I changed.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">What files have I changed since my last commit?</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Commit only the CSS files with the message "update typography styles".</span>
+      </div>
+    </div>
+    <p class="cc-footer">Claude writes commit messages that actually describe the change — not just "update stuff".</p>
+  </div>
+
+  <!-- SLIDE 5: PUSH & PULL -->
+  <div class="slide" id="s5">
+    <div class="slide-header">
+      <h2>Push & Pull — Syncing Up</h2>
+      <span class="num">04 / 07</span>
+    </div>
+    <div class="push-pull-layout">
+      <!-- LOCAL -->
+      <div class="repo-box local">
+        <div class="repo-label">Your Computer</div>
+        <div class="repo-title">Local Repo</div>
+        <div class="repo-desc">Your private workspace. You write code, make commits, and test here before sharing.</div>
+        <div class="mini-commits">
+          <div class="mini-commit">a1</div>
+          <div class="mini-commit">b2</div>
+          <div class="mini-commit">c3</div>
+          <div class="mini-commit" style="background:var(--accent);color:var(--paper)">d4 ✦</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);margin-top:8px">1 commit ahead of origin</div>
+      </div>
+
+      <!-- ARROWS -->
+      <div class="arrows-col">
+        <div class="action-arrow">
+          <div class="arrow-icon push-color">→</div>
+          <div class="arrow-label push-color">push</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center">upload<br>your work</div>
+        </div>
+        <div style="width:2px;height:32px;background:var(--line)"></div>
+        <div class="action-arrow">
+          <div class="arrow-icon pull-color">←</div>
+          <div class="arrow-label pull-color">pull</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center">download<br>team's work</div>
+        </div>
+      </div>
+
+      <!-- REMOTE -->
+      <div class="repo-box remote">
+        <div class="repo-label">GitHub.com</div>
+        <div class="repo-title">Remote Repo</div>
+        <div class="repo-desc">The shared source of truth. Everyone on the team syncs with this. It's always "live."</div>
+        <div class="mini-commits">
+          <div class="mini-commit">a1</div>
+          <div class="mini-commit">b2</div>
+          <div class="mini-commit">c3</div>
+          <div class="mini-commit" style="opacity:.2">d4</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(245,240,232,.4);margin-top:8px">waiting for your push…</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:24px;border-top:1px solid var(--line);padding-top:16px">
+      <div style="flex:1;font-size:13px;font-weight:300;color:var(--muted);line-height:1.6"><strong style="color:var(--accent)">git push</strong> &nbsp;—&nbsp; Sends your new commits up to GitHub so teammates can see and use them.</div>
+      <div style="flex:1;font-size:13px;font-weight:300;color:var(--muted);line-height:1.6"><strong style="color:var(--accent2)">git pull</strong> &nbsp;—&nbsp; Downloads any new commits from GitHub that your teammates have pushed since you last synced.</div>
+    </div>
+  </div>
+
+  <!-- CC SLIDE 5: Push & pull with Claude -->
+  <div class="slide cc-slide" id="cc5">
+    <div class="cc-eyebrow">↯ Try it in Claude Code</div>
+    <h2 class="cc-headline">Let Claude <em>sync your work</em><br>with the team.</h2>
+    <p class="cc-subhead">After "Push & Pull" — stay in sync without the commands →</p>
+    <div class="cc-prompts">
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Push my current branch to GitHub.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Pull the latest changes from my team and tell me what's new.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Am I behind the remote branch? What commits am I missing?</span>
+      </div>
+    </div>
+    <p class="cc-footer">Claude will flag conflicts before they become a problem.</p>
+  </div>
+
+  <!-- SLIDE 6: PULL REQUESTS -->
+  <div class="slide" id="s6">
+    <div class="slide-header">
+      <h2>Pull Requests — Proposing Changes</h2>
+      <span class="num">05 / 07</span>
+    </div>
+    <div class="pr-flow">
+      <div class="pr-step">
+        <div class="step-num">1</div>
+        <h3>Create a Branch</h3>
+        <p>You branch off your team's base branch — usually <code style="font-family:'DM Mono',monospace;font-size:12px;background:rgba(15,15,15,.08);padding:1px 5px;border-radius:3px">main</code>, but ask your tech lead which branch to start from. Then work on your feature, fix, or redesign.</p>
+        <div class="cmd">git checkout -b feature/hero</div>
+      </div>
+      <div style="width:1px;background:var(--line)"></div>
+      <div class="pr-step" style="border-radius:0">
+        <div class="step-num">2</div>
+        <h3>Make & Push Commits</h3>
+        <p>Do your work, save commits, then push your branch to GitHub.</p>
+        <div class="cmd">git push origin feature/hero</div>
+      </div>
+      <div style="width:1px;background:var(--line)"></div>
+      <div class="pr-step" style="border-radius:0">
+        <div class="step-num">3</div>
+        <h3>Open a PR</h3>
+        <p>On GitHub, open a Pull Request. You're saying: "I'd like to merge my branch into the base branch." Your tech lead will confirm where it should land.</p>
+        <div class="cmd">GitHub UI → New Pull Request</div>
+      </div>
+      <div style="width:1px;background:var(--line)"></div>
+      <div class="pr-step" style="border-radius:0">
+        <div class="step-num">4</div>
+        <h3>Review & Discuss</h3>
+        <p>Teammates comment, request changes, or approve. Conversations happen inside the PR.</p>
+        <div class="cmd">Code review → Approvals</div>
+      </div>
+      <div style="width:1px;background:var(--line)"></div>
+      <div class="pr-step" style="border-radius:0 12px 12px 0">
+        <div class="step-num" style="background:var(--accent3)">5</div>
+        <h3>Merge!</h3>
+        <p>Once approved, the PR is merged into the base branch. Your work is now part of the shared codebase. Your feature branch can be deleted.</p>
+        <div class="cmd">Merge pull request ✓</div>
+      </div>
+    </div>
+    <div class="pr-merge-visual">
+      <div class="icon">🔀</div>
+      <div>
+        <h3>A PR is a conversation, not just code.</h3>
+        <p>It's a formal way to say "review my work before it goes live." Always ask your tech lead which branch to target — teams use <strong>main</strong>, <strong>develop</strong>, <strong>staging</strong>, and others. Designers can open PRs for CSS changes, copy edits, and asset updates — not just developers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CC SLIDE 6: PRs with Claude -->
+  <div class="slide cc-slide" id="cc6">
+    <div class="cc-eyebrow">↯ Try it in Claude Code</div>
+    <h2 class="cc-headline">Let Claude <em>write and manage</em><br>your Pull Request.</h2>
+    <p class="cc-subhead">After "Pull Requests" — from push to review-ready in one ask →</p>
+    <div class="cc-prompts">
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">Push my branch and write me a clear PR description based on my commits.</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">What open pull requests are there and what are they waiting on?</span>
+      </div>
+      <div class="cc-prompt">
+        <span class="cc-cursor">&gt;_</span>
+        <span class="cc-prompt-text">My PR has review comments — summarize what needs to change.</span>
+      </div>
+    </div>
+    <p class="cc-footer">Claude can draft PR titles, summaries, and responses to reviewer comments.</p>
+  </div>
+
+  <!-- SLIDE 7: FULL WORKFLOW -->
+  <div class="slide" id="s7">
+    <div class="slide-header">
+      <h2>The Full Picture</h2>
+      <span class="num">06 / 07</span>
+    </div>
+    <div class="workflow-diagram">
+      <svg viewBox="0 0 960 360" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+        <!-- Columns: Local 120, arrows 90, GitHub 120, arrows 90, Team 120 -->
+
+        <!-- ---- BOXES ---- -->
+        <!-- Local -->
+        <rect x="20" y="40" width="180" height="280" rx="12" fill="#0f0f0f" stroke="#0f0f0f" stroke-width="2"/>
+        <text x="110" y="70" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#e84b1a" letter-spacing="2">YOUR COMPUTER</text>
+
+        <!-- GitHub -->
+        <rect x="390" y="40" width="180" height="280" rx="12" fill="#f5f0e8" stroke="#0f0f0f" stroke-width="2"/>
+        <text x="480" y="70" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#e84b1a" letter-spacing="2">GITHUB.COM</text>
+
+        <!-- Team -->
+        <rect x="760" y="40" width="180" height="280" rx="12" fill="#0f0f0f" stroke="#0f0f0f" stroke-width="2"/>
+        <text x="850" y="70" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#e84b1a" letter-spacing="2">TEAMMATE</text>
+
+        <!-- ---- LOCAL ACTIONS ---- -->
+        <!-- commits stack -->
+        <circle cx="110" cy="130" r="18" fill="#f5c842" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="110" y="135" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#0f0f0f">commit</text>
+        <circle cx="110" cy="175" r="18" fill="#f5c842" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="110" y="180" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#0f0f0f">commit</text>
+        <circle cx="110" cy="220" r="18" fill="#e84b1a" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="110" y="225" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#f5f0e8">branch</text>
+
+        <text x="110" y="275" text-anchor="middle" font-family="DM Sans" font-size="12" fill="rgba(245,240,232,.5)">work locally</text>
+
+        <!-- ---- GITHUB CONTENT ---- -->
+        <!-- PR icon area -->
+        <rect x="415" y="90" width="130" height="50" rx="8" fill="#0f0f0f"/>
+        <text x="480" y="110" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#f5c842" letter-spacing="1">PULL REQUEST</text>
+        <text x="480" y="128" text-anchor="middle" font-family="DM Sans" font-size="11" fill="rgba(245,240,232,.6)">review &amp; discuss</text>
+
+        <rect x="415" y="160" width="130" height="40" rx="8" fill="#1aaa5b" opacity=".2" stroke="#1aaa5b" stroke-width="1.5"/>
+        <text x="480" y="185" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#1aaa5b">approved ✓</text>
+
+        <rect x="415" y="220" width="130" height="40" rx="8" fill="#2a6ee8" opacity=".15" stroke="#2a6ee8" stroke-width="1.5"/>
+        <text x="480" y="245" text-anchor="middle" font-family="DM Sans" font-size="12" fill="#2a6ee8">merged into main</text>
+
+        <text x="480" y="295" text-anchor="middle" font-family="DM Sans" font-size="12" fill="rgba(15,15,15,.5)">shared source of truth</text>
+
+        <!-- ---- TEAM CONTENT ---- -->
+        <circle cx="850" cy="140" r="18" fill="#2a6ee8" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="850" y="145" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#f5f0e8">pull</text>
+        <circle cx="850" cy="190" r="18" fill="#f5c842" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="850" y="195" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#0f0f0f">work</text>
+        <circle cx="850" cy="240" r="18" fill="#f5c842" stroke="#f5f0e8" stroke-width="1.5"/>
+        <text x="850" y="245" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#0f0f0f">push</text>
+        <text x="850" y="295" text-anchor="middle" font-family="DM Sans" font-size="12" fill="rgba(245,240,232,.5)">same flow</text>
+
+        <!-- ---- ARROWS ---- -->
+        <!-- push -->
+        <line x1="205" y1="155" x2="388" y2="115" stroke="#e84b1a" stroke-width="2" marker-end="url(#arr-red)"/>
+        <text x="300" y="128" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#e84b1a">push →</text>
+
+        <!-- pull request -->
+        <text x="300" y="185" text-anchor="middle" font-family="DM Mono" font-size="10" fill="#7a7065">(opens PR)</text>
+
+        <!-- pull from github -->
+        <line x1="388" y1="240" x2="205" y2="260" stroke="#2a6ee8" stroke-width="2" marker-end="url(#arr-blue)"/>
+        <text x="300" y="272" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#2a6ee8">← pull</text>
+
+        <!-- team pull -->
+        <line x1="572" y1="175" x2="758" y2="145" stroke="#2a6ee8" stroke-width="2" marker-end="url(#arr-blue)"/>
+        <text x="665" y="148" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#2a6ee8">← pull</text>
+
+        <!-- team push -->
+        <line x1="758" y1="235" x2="572" y2="265" stroke="#e84b1a" stroke-width="2" marker-end="url(#arr-red)"/>
+        <text x="665" y="266" text-anchor="middle" font-family="DM Mono" font-size="11" fill="#e84b1a">push →</text>
+
+        <!-- arrowhead markers -->
+        <defs>
+          <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 Z" fill="#e84b1a"/>
+          </marker>
+          <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="0" refY="3" orient="auto">
+            <path d="M 6 0 L 0 3 L 6 6 Z" fill="#2a6ee8"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: WORKFLOW -->
+  <div class="slide" id="s8">
+    <div class="slide-header">
+      <h2>Git Workflow — In Order</h2>
+      <span class="num">07 / 07</span>
+    </div>
+    <div class="workflow-cols">
+
+      <!-- LEFT COLUMN: Branch → Commit -->
+      <div class="workflow-col">
+        <div class="workflow-phase phase-branch">① Branch off</div>
+        <div class="wf-step">
+          <div class="wf-num">1</div>
+          <div class="wf-body">
+            <span class="wf-label">Create &amp; switch to a new branch</span>
+            <span class="wf-cmd">git checkout -b feature/name</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+
+        <div class="workflow-phase phase-commit">② Commit your work</div>
+        <div class="wf-step">
+          <div class="wf-num">2</div>
+          <div class="wf-body">
+            <span class="wf-label">See which files have changed</span>
+            <span class="wf-cmd">git status</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">3</div>
+          <div class="wf-body">
+            <span class="wf-label">Stage all modified files</span>
+            <span class="wf-cmd">git add .</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">4</div>
+          <div class="wf-body">
+            <span class="wf-label">Save a snapshot with a message</span>
+            <span class="wf-cmd">git commit -m "your message"</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Sync → PR -->
+      <div class="workflow-col">
+        <div class="workflow-phase phase-sync">③ Sync with the team</div>
+        <div class="wf-step">
+          <div class="wf-num">5</div>
+          <div class="wf-body">
+            <span class="wf-label">Pull in any teammate changes</span>
+            <span class="wf-cmd">git pull</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">6</div>
+          <div class="wf-body">
+            <span class="wf-label">Push your branch up to GitHub</span>
+            <span class="wf-cmd">git push origin feature/name</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+
+        <div class="workflow-phase phase-pr">④ Open a Pull Request</div>
+        <div class="wf-step">
+          <div class="wf-num">7</div>
+          <div class="wf-body">
+            <span class="wf-label">Open a PR &amp; request review</span>
+            <span class="wf-cmd green">GitHub.com → New Pull Request</span>
+          </div>
+          <span class="wf-arrow">→</span>
+        </div>
+        <div class="wf-step">
+          <div class="wf-num">8</div>
+          <div class="wf-body">
+            <span class="wf-label">After merge, sync your local main</span>
+            <span class="wf-cmd green">git pull origin main</span>
+          </div>
+          <span class="wf-arrow">✓</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button id="prev" title="Previous (←)">←</button>
+  <div class="dots" id="dots"></div>
+  <span id="slide-num">1 / 8</span>
+  <button id="next" title="Next (→)">→</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  const slideNum = document.getElementById('slide-num');
+  let cur = 0;
+
+  // build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    document.querySelectorAll('.dot')[cur].classList.remove('on');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.dot')[cur].classList.add('on');
+    slideNum.textContent = `${cur + 1} / ${slides.length}`;
+  }
+
+  document.getElementById('next').onclick = () => go(cur + 1);
+  document.getElementById('prev').onclick = () => go(cur - 1);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') go(cur + 1);
+    if (e.key === 'ArrowLeft') go(cur - 1);
+  });
+</script>
+</body>
+</html>
